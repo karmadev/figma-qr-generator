@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<body>
+<label for="tableData">Enter table number and URL, separated by a comma (one per line):</label>
+<textarea id="tableData" rows="10" cols="50"></textarea><br>
+<label for="fgColor">Foreground Color:</label>
+<input type="color" id="fgColor" name="fgColor" value="#000000"><br>
+<label for="bgColor">Background Color:</label>
+<input type="color" id="bgColor" name="bgColor" value="#ffffff"><br>
+<label for="tablePrefix">Table Prefix:</label>
+<input type="text" id="tablePrefix" name="tablePrefix"><br>
+
+<label for="tableSuffix">Table Suffix:</label>
+<input type="text" id="tableSuffix" name="tableSuffix"><br>
+
+<label for="transparentBg">Transparent Background:</label>
+<input type="checkbox" id="transparentBg" name="transparentBg"><br>
+
+<button id="generate">Generate QR Codes</button>
+
+<script>
+    document.getElementById('generate').onclick = () => {
+        const tableData = document.getElementById('tableData').value;
+        const fgColor = document.getElementById('fgColor').value;
+        const bgColor = document.getElementById('bgColor').value;
+        const tablePrefix = document.getElementById('tablePrefix').value;
+        const tableSuffix = document.getElementById('tableSuffix').value;
+        const transparentBg = document.getElementById('transparentBg').checked;
+        parent.postMessage({
+            pluginMessage: {
+                type: 'generate-qr-codes',
+                tableData,
+                fgColor,
+                bgColor,
+                tablePrefix,
+                tableSuffix,
+                transparentBg
+            }
+        }, '*');
+    };
+</script>
+
+</body>
+</html>
