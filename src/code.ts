@@ -8,7 +8,7 @@ interface PluginMessage {
     transparentBg: boolean;
 }
 
-figma.showUI(__html__, { width: 400, height: 300 });
+figma.showUI(__html__, { width: 400, height: 600 });
 
 figma.ui.onmessage = async (msg: PluginMessage) => {
     if (msg.type === 'generate-qr-codes') {
@@ -32,10 +32,13 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
             // Apply prefix and suffix
             tableNumber = msg.tablePrefix + tableNumber + msg.tableSuffix;
 
-            // Adjust the apiUrl to consider transparency
-            const bgColorParam = msg.transparentBg ? "rgba(0,0,0,0)" : encodeURIComponent(msg.bgColor);
-            const apiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(qrUrl)}&format=svg&color=${encodeURIComponent(msg.fgColor)}&bgcolor=${bgColorParam}`;
+            const bgColor = msg.bgColor.replace("#", "");
+            const fgColor = msg.fgColor.replace("#", "");
 
+            // Adjust the apiUrl to consider transparency
+            const bgColorParam = msg.transparentBg ? "rgba(0,0,0,0)" : encodeURIComponent(bgColor);
+
+            const apiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(qrUrl)}&format=svg&color=${encodeURIComponent(fgColor)}&bgcolor=${bgColorParam}`;
 
             try {
                 const response = await fetch(apiUrl);

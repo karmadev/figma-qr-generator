@@ -1,22 +1,103 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Karma QR Code Generator</title>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+            color: #333;
+        }
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 12px;
+            color: #666;
+        }
+        textarea, input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        textarea {
+            height: 100px;
+            resize: vertical;
+        }
+        .color-inputs {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        .color-input {
+            width: 48%;
+        }
+        .checkbox {
+            margin-bottom: 15px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #18A0FB;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #1089d4;
+        }
+    </style>
+</head>
 <body>
-<label for="tableData">Enter table number and URL, separated by a comma (one per line):</label>
-<textarea id="tableData" rows="10" cols="50"></textarea><br>
-<label for="fgColor">Foreground Color:</label>
-<input type="color" id="fgColor" name="fgColor" value="#000000"><br>
-<label for="bgColor">Background Color:</label>
-<input type="color" id="bgColor" name="bgColor" value="#ffffff"><br>
-<label for="tablePrefix">Table Prefix:</label>
-<input type="text" id="tablePrefix" name="tablePrefix"><br>
+<div class="container">
+    <h1>Karma QR Code Generator</h1>
+    <label for="tableData">Enter table number and URL, separated by a comma (one per line):</label>
+    <textarea id="tableData" rows="10"></textarea>
 
-<label for="tableSuffix">Table Suffix:</label>
-<input type="text" id="tableSuffix" name="tableSuffix"><br>
+    <div class="color-inputs">
+        <div class="color-input">
+            <label for="fgColor">Foreground Color:</label>
+            <input type="color" id="fgColor" name="fgColor" value="#000000">
+        </div>
+        <div class="color-input">
+            <label for="bgColor">Background Color:</label>
+            <input type="color" id="bgColor" name="bgColor" value="#ffffff">
+        </div>
+    </div>
 
-<label for="transparentBg">Transparent Background:</label>
-<input type="checkbox" id="transparentBg" name="transparentBg"><br>
+    <label for="tablePrefix">Table Prefix:</label>
+    <input type="text" id="tablePrefix" name="tablePrefix">
 
-<button id="generate">Generate QR Codes</button>
+    <label for="tableSuffix">Table Suffix:</label>
+    <input type="text" id="tableSuffix" name="tableSuffix">
+
+    <div class="checkbox">
+        <input type="checkbox" id="transparentBg" name="transparentBg">
+        <label for="transparentBg">Transparent Background</label>
+    </div>
+
+    <button id="generate">Generate QR Codes</button>
+</div>
 
 <script>
     document.getElementById('generate').onclick = () => {
@@ -39,6 +120,5 @@
         }, '*');
     };
 </script>
-
 </body>
 </html>
