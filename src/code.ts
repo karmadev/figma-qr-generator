@@ -15,11 +15,18 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
         // Assuming the user has selected a frame as the base design template
         const selectedNodes = figma.currentPage.selection;
         if (selectedNodes.length !== 1 || selectedNodes[0].type !== "FRAME") {
-            figma.ui.postMessage({ type: 'error', message: 'Please select a single frame as the base design template.' });
+            figma.notify('Please select a single frame as the base design template.', { error: true, timeout: 3000 });
             return;
         }
 
         const baseTemplate = selectedNodes[0] as FrameNode;
+
+        // Check for bitmaps/images in the baseTemplate
+        const hasBitmaps = checkForBitmaps(baseTemplate);
+        if (hasBitmaps) {
+            figma.notify('Your design contains bitmaps/images. For best printing results, please use vector versions of all elements, including the logotype.', { error: true, timeout: 10000 });
+        }
+
         const lines = msg.tableData.trim().split('\n');
         let row = 0;
         let column = 0;
@@ -70,6 +77,11 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
                     tableNameText.characters = tableNumber; // Now includes prefix and suffix
                 }
 
+                // New code: Flatten all text nodes in the clonedTemplate
+                console.log(`Starting to flatten text nodes in clonedTemplate for table number: ${tableNumber}`);
+                await flattenAllText(clonedTemplate);
+                console.log(`Finished flattening text nodes in clonedTemplate for table number: ${tableNumber}`);
+
                 // Positioning cloned templates as a grid
                 clonedTemplate.x = (clonedTemplate.width + padding) * column;
                 clonedTemplate.y = (clonedTemplate.height + padding) * row;
@@ -81,8 +93,40 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
                     row++;
                 }
             } catch (error) {
+                figma.notify(`Failed to generate QR code for table number ${tableNumber}.`, { timeout: 3000 });
                 console.error(`Failed to generate QR code for table number ${tableNumber}:`, error);
             }
         }
     }
 };
+
+// New function to flatten all text nodes in a given node and its children
+async function flattenAllText(node: SceneNode) {
+    if ("children" in node) {
+        for (const child of [...node.children]) {
+            if (child.type === "TEXT") {
+                console.log(`Flattening text node: ${child.name}`);
+                figma.flatten([child]);
+            } else {
+                await flattenAllText(child);
+            }
+        }
+    }
+}
+
+// Function to check for bitmaps/images in a given node and its children
+function checkForBitmaps(node: SceneNode): boolean {
+    let hasBitmaps = false;
+    if ("children" in node) {
+        for (const child of [...node.children]) {
+            if (child.type === "RECTANGLE" && child.isAsset) {
+                console.log(`Found bitmap/image node: ${child.name}`);
+                hasBitmaps = true;
+            } else {
+                console.log(`Found ${child.type} ${child.isAsset} node: ${child.name}`);
+                hasBitmaps = checkForBitmaps(child) || hasBitmaps;
+            }
+        }
+    }
+    return hasBitmaps;
+}
